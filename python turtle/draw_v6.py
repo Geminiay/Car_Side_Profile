@@ -60,9 +60,9 @@ widthEq = hood*hoodCos+x*frontCos+z+y*backCos-base
 heightEq1 = frontHeight+hood*hoodSin+x*frontSin-totalHeight
 heightEq2 = backHeight+y*backSin-totalHeight
 eq = solve((widthEq, heightEq1, heightEq2),(x, y, z),dict=True)
-windShield = round(eq[0][x],3) #actual value is 664.75
-rearWindow = round(eq[0][y],3) #actual value is 755.63
-roof = round(eq[0][z],3) #actual value is 2507.93
+windShield = round(eq[0][x],2) #actual value is 664.75
+rearWindow = round(eq[0][y],2) #actual value is 755.63
+roof = round(eq[0][z],2) #actual value is 2507.93
 
 
 #Print Parameter Results 
@@ -73,21 +73,15 @@ print("Rear Window Angle: ",backAngle)
 print("Roof Length: ",roof)
 
 
-#Write Outputs to Excel
-sheet.cell(row=next_row, column=1).value = "{:.2f}".format(windShield)
-sheet.cell(row=next_row, column=2).value = "{:.2f}".format(frontAngle)
-sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
-sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
-sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
-workbook.save("Results.xlsx")
-
-
 # Create turtle screen
-screen.setup(width=800, height=600)
+screen.setup(width=460, height=200)
 
 
 #Draw
 t.hideturtle()
+t.penup()
+t.goto(-totalWidth/20, -totalHeight/20)
+t.pendown()
 t.fd(base/10)
 t.lt(90)
 t.fd(backHeight/10)
@@ -110,15 +104,17 @@ turtle.done()
 with Image.open(eps_filename) as img:
     img.save(png_filename)
 
-# Insert the image into the Excel file
-workbook = openpyxl.load_workbook("Results.xlsx")
-sheet = workbook.active
+# Insert the image and parameters into the Excel file
+sheet.cell(row=next_row, column=1).value = "{:.2f}".format(windShield)
+sheet.cell(row=next_row, column=2).value = "{:.2f}".format(frontAngle)
+sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
+sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
+sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
 
 img = OpenpyxlImage(png_filename)
 img.anchor = 'G' + str(next_row)
 sheet.add_image(img)
 
-# Save the workbook
 workbook.save("Results.xlsx")
 workbook.close()
 
