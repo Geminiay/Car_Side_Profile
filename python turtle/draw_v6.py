@@ -6,11 +6,12 @@ import openpyxl
 from openpyxl.drawing.image import Image as OpenpyxlImage
 from PIL import Image
 import os
-from datetime import datetime
 
-# Create the 'images' directory if it doesn't exist
+# Create the 'images' and 'eps_images' directory if it doesn't exist
 if not os.path.exists('images'):
     os.makedirs('images')
+if not os.path.exists('eps_images'):
+    os.makedirs('eps_images')
 
 #Variables
 turtle.title("Vehicle Side Profile")
@@ -24,10 +25,9 @@ sheet = workbook.active
 next_row = sheet.max_row + 1
 
 
-# Generate a unique filename based on the current date and time
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-eps_filename = f'eps_images/drawing_{timestamp}.eps'
-png_filename = f'images/drawing_{timestamp}.png'
+# Generate a unique filename based on the current row number
+eps_filename = f'eps_images/drawing_{next_row}.eps'
+png_filename = f'images/drawing_{next_row}.png'
 
 
 #Constants
@@ -99,8 +99,7 @@ t.fd(frontHeight/10)
 
 # Save the drawing as an EPS file and convert EPS file to PNG
 canvas.postscript(file=eps_filename)
-turtle.done()
-
+screen.bye()
 with Image.open(eps_filename) as img:
     img.save(png_filename)
 
@@ -110,12 +109,9 @@ sheet.cell(row=next_row, column=2).value = "{:.2f}".format(frontAngle)
 sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
 sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
 sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
-
-img = OpenpyxlImage(png_filename)
-img.anchor = 'G' + str(next_row)
-sheet.add_image(img)
+sheet.cell(row=next_row, column=7).value = png_filename
 
 workbook.save("Results.xlsx")
 workbook.close()
 
-print("Outputs saved to Excel.")
+print(f"Outputs saved to Excel in row {next_row}.")
