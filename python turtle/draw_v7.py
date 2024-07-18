@@ -120,6 +120,7 @@ screen = turtle.Screen()
 canvas = turtle.getcanvas()
 screen.setup(width=460, height=200)
 
+#Iteration
 x = 0
 while x < iteration: 
     backAngle, frontAngle, windShield, rearWindow, roof = calculateParameters()
