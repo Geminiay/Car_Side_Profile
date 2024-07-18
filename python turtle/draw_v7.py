@@ -106,8 +106,6 @@ os.makedirs(f'dataset-{current_date}')
 os.makedirs(f'dataset-{current_date}/images')
 os.makedirs(f'dataset-{current_date}/eps_images')
 datasetfile = f'dataset-{current_date}/dataset.xlsx'
-
-#Create a new workbook and add headers
 sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "", "Image Path"])
 
 #Getting input for iteration from user

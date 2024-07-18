@@ -19,9 +19,11 @@ screen = turtle.Screen()
 s = turtle.getscreen()
 t = turtle.Turtle()
 canvas = turtle.getcanvas()
-x, y, z = symbols('x y z')
-workbook = openpyxl.load_workbook("Results.xlsx")
 sheet = workbook.active
+
+x, y, z = symbols('x y z')
+
+workbook = openpyxl.load_workbook("Results.xlsx")
 next_row = sheet.max_row + 1
 
 
@@ -49,6 +51,7 @@ frontAngle = round(random.uniform(50,65), 2) #actual value is 58.19
 #Angles
 hoodCos = math.cos(math.radians(hoodAngle))
 hoodSin = math.sin(math.radians(hoodAngle))
+
 frontCos = math.cos(math.radians(frontAngle))
 frontSin = math.sin(math.radians(frontAngle))
 backCos = math.cos(math.radians(backAngle))
