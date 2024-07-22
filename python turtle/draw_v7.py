@@ -41,13 +41,6 @@ def calculateParameters():
     rearWindow = round(eq[0][y],2) #actual value is 755.63
     roof = round(eq[0][z],2) #actual value is 2507.93
     
-    #Print Parameter Results 
-    print("Wind Shield Length: ",windShield)
-    print("Wind Shield Angle: ",frontAngle)
-    print("Rear Window Length: ",rearWindow)
-    print("Rear Window Angle: ",backAngle)
-    print("Roof Length: ",roof)
-    
     return windShield, frontAngle, rearWindow, backAngle, roof
 
 def draw(windShield, frontAngle, rearWindow, backAngle, roof):
@@ -75,6 +68,14 @@ def draw(windShield, frontAngle, rearWindow, backAngle, roof):
     t.lt(90)
 
 def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
+    
+    #Print Parameter Results 
+    print("Wind Shield Length: ",windShield)
+    print("Wind Shield Angle: ",frontAngle)
+    print("Rear Window Length: ",rearWindow)
+    print("Rear Window Angle: ",backAngle)
+    print("Roof Length: ",roof)
+    
     # Next row for the data
     next_row = sheet.max_row + 1
 
