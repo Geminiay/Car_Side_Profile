@@ -48,9 +48,9 @@ def calculateParameters():
     print("Rear Window Angle: ",backAngle)
     print("Roof Length: ",roof)
     
-    return backAngle, frontAngle, windShield, rearWindow, roof
+    return windShield, frontAngle, rearWindow, backAngle, roof
 
-def draw(backAngle, frontAngle, windShield, rearWindow, roof):
+def draw(windShield, frontAngle, rearWindow, backAngle, roof):
 
     turtle.title("Vehicle Side Profile")
     
@@ -74,7 +74,7 @@ def draw(backAngle, frontAngle, windShield, rearWindow, roof):
     t.fd(frontHeight/10)
     t.lt(90)
 
-def saveResults(backAngle, frontAngle, windShield, rearWindow, roof):   
+def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
     # Next row for the data
     next_row = sheet.max_row + 1
 
@@ -93,6 +93,8 @@ def saveResults(backAngle, frontAngle, windShield, rearWindow, roof):
     sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
     sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
     sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
+    if isRandom == True:
+        sheet.cell(row=next_row, column=6).value = cd
     sheet.cell(row=next_row, column=7).value = png_filename
 
     workbook.save(datasetfile)
@@ -100,16 +102,23 @@ def saveResults(backAngle, frontAngle, windShield, rearWindow, roof):
 
     print(f"Outputs saved to Excel in row {next_row}.")
 
+#Getting input for iteration from user
+iteration = int(input("How many iterations needed?:\n"))
+while True:
+    userBool = input("Do you want random values for coefficient?: (y/n)").lower()
+    if userBool in ['y', 'n']:
+        isRandom = userBool == 'y'
+        break
+    else:
+        print("Enter a valid input.\n") 
+
 #Create files
 current_date = datetime.now().strftime('%Y_%m_%d')
 os.makedirs(f'dataset-{current_date}')
 os.makedirs(f'dataset-{current_date}/images')
 os.makedirs(f'dataset-{current_date}/eps_images')
 datasetfile = f'dataset-{current_date}/dataset.xlsx'
-sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "", "Image Path"])
-
-#Getting input for iteration from user
-iteration = int(input("How many iterations needed?:\n"))
+sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd Coefficient", "Image Path"])
 
 #Create turtle screen
 s = turtle.getscreen()
@@ -118,12 +127,17 @@ screen = turtle.Screen()
 canvas = turtle.getcanvas()
 screen.setup(width=460, height=200)
 
+#Draws the original values and saves
+draw(664.75, 58.19, 755.63, 78.26, 2507.93)
+saveResults(664.75, 58.19, 755.63, 78.26, 2507.93, 0.471)
+t.clear()
+
 #Iteration
 x = 0
 while x < iteration: 
-    backAngle, frontAngle, windShield, rearWindow, roof = calculateParameters()
-    draw(backAngle, frontAngle, windShield, rearWindow, roof)
-    saveResults(backAngle, frontAngle, windShield, rearWindow, roof)
+    windShield, frontAngle, rearWindow, backAngle, roof = calculateParameters()
+    draw(windShield, frontAngle, rearWindow, backAngle, roof)
+    saveResults(windShield, frontAngle, rearWindow, backAngle, roof, round(random.uniform(0,1), 3))
     t.clear()
     x += 1
 
