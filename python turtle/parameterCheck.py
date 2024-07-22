@@ -1,4 +1,6 @@
 import turtle
+from PIL import Image
+from openpyxl.drawing.image import Image as OpenpyxlImage
 
 backAngle = 78.26
 frontAngle = 58.19
@@ -19,6 +21,7 @@ t = turtle.Turtle()
 screen = turtle.Screen()
 canvas = turtle.getcanvas()
 
+
 #Draw
 t.hideturtle()
 t.penup()
@@ -38,4 +41,8 @@ t.fd(hood/5)
 t.lt(90-hoodAngle)
 t.fd(frontHeight/5)
 t.lt(90)
-turtle.done()
+
+# Save the drawing as an EPS file and convert EPS file to PNG
+canvas.postscript(file = f'original.eps')
+with Image.open(f'original.eps') as img:
+    img.save(f'original.png')
