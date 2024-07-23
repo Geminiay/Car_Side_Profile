@@ -94,10 +94,10 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
     sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
     sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
     sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
+    sheet.cell(row=next_row, column=6).value = png_filename
     if isRandom == True:
-        sheet.cell(row=next_row, column=6).value = cd
-    sheet.cell(row=next_row, column=7).value = png_filename
-
+        sheet.cell(row=next_row, column=7).value = cd
+    
     workbook.save(datasetfile)
     workbook.close()
 
@@ -119,7 +119,7 @@ os.makedirs(f'dataset-{current_date}')
 os.makedirs(f'dataset-{current_date}/images')
 os.makedirs(f'dataset-{current_date}/eps_images')
 datasetfile = f'dataset-{current_date}/dataset.xlsx'
-sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd Coefficient", "Image Path"])
+sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Image Path", "Cd Coefficient" ])
 
 #Create turtle screen
 s = turtle.getscreen()
