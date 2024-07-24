@@ -118,7 +118,7 @@ while True:
 
 #Create files
 if isRandom == True: parentFile = f'dataset-{current_date}-randomCd'
-else: cd = parentFile = f'dataset-{current_date}'
+else: parentFile = f'dataset-{current_date}'
 epsFile = f'{parentFile}/eps_images'
 imageFile = f'{parentFile}/images'
 datasetfile = f'{parentFile}/dataset.xlsx'
