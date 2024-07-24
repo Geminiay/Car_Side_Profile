@@ -3,6 +3,7 @@ import random
 import math
 from sympy import symbols, solve
 import openpyxl
+from openpyxl.styles import Alignment
 from openpyxl.drawing.image import Image as OpenpyxlImage
 from PIL import Image
 import os
@@ -77,29 +78,34 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     print("Rear Window Angle: ",backAngle)
     print("Roof Length: ",roof)
 
-    # Next row for the data
+    #Next row for the data
     next_row = sheet.max_row + 1
 
-    # Generate a unique filename based on the current row number
-    eps_filename = f'{epsFile}/drawing_{next_row}.eps'
-    png_filename = f'{imageFile}/drawing_{next_row}.png'
+    #Generate a unique filename based on the current row number
+    eps_filename = f'{epsFile}/drawing_{next_row-2}.eps'
+    png_filename = f'{imageFile}/drawing_{next_row-2}.png'
     
-    # Save the drawing as an EPS file and convert EPS file to PNG
+    #Save the drawing as an EPS file and convert EPS file to PNG
     canvas.postscript(file=eps_filename)
     with Image.open(eps_filename) as img:
         img.save(png_filename)
     
-    # Insert the image and parameters into the Excel file
-    sheet.cell(row=next_row, column=1).value = "{:.2f}".format(windShield)
-    sheet.cell(row=next_row, column=2).value = "{:.2f}".format(frontAngle)
-    sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
-    sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
-    sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
+    #Insert the image and parameters into the Excel file
+    sheet.cell(row=next_row, column=1).value = next_row-2
+    sheet.cell(row=next_row, column=2).value = "{:.2f}".format(windShield)
+    sheet.cell(row=next_row, column=3).value = "{:.2f}".format(frontAngle)
+    sheet.cell(row=next_row, column=4).value = "{:.2f}".format(rearWindow)
+    sheet.cell(row=next_row, column=5).value = "{:.2f}".format(backAngle)
+    sheet.cell(row=next_row, column=6).value = "{:.2f}".format(roof)
     
+    #Center-align all text in the newly added row
+    for col in range(1, 7):
+        sheet.cell(row=next_row, column=col).alignment = Alignment(horizontal='center')
+
     workbook.save(datasetfile)
     workbook.close()
 
-    print(f"Outputs saved to Excel in row {next_row}.")
+    print(f"Outputs saved to Excel as parameter number {next_row-2}.")
 
 #Getting input for iteration from user
 iteration = int(input("How many iterations needed?:\n"))
@@ -112,7 +118,16 @@ datasetfile = f'{parentFile}/dataset.xlsx'
 os.makedirs(parentFile)
 os.makedirs(imageFile)
 os.makedirs(epsFile)
-sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
+
+#Ordering the header row
+columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+for col in columns:
+    sheet.column_dimensions[col].width = 27
+sheet.append(["Parameter Order", "Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
+
+#Center-align the header row
+for col in range(1, 8):
+    sheet.cell(row=1, column=col).alignment = Alignment(horizontal='center', vertical='center')
 
 #Create turtle screen
 s = turtle.getscreen()
