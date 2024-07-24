@@ -117,7 +117,8 @@ while True:
 
 #Create files
 current_date = datetime.now().strftime('%Y_%m_%d')
-os.makedirs(f'dataset-{current_date}')
+if isRandom == True: os.makedirs(f'dataset-{current_date}-randomCd')
+else: cd = os.makedirs(f'dataset-{current_date}')
 os.makedirs(f'dataset-{current_date}/images')
 os.makedirs(f'dataset-{current_date}/eps_images')
 datasetfile = f'dataset-{current_date}/dataset.xlsx'
