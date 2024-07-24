@@ -21,6 +21,7 @@ hoodCos = math.cos(math.radians(hoodAngle))
 hoodSin = math.sin(math.radians(hoodAngle))
 workbook = openpyxl.Workbook()
 sheet = workbook.active
+current_date = datetime.now().strftime('%Y_%m_%d')
 
 def calculateParameters():
     #Parameters
@@ -84,8 +85,8 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
     next_row = sheet.max_row + 1
 
     # Generate a unique filename based on the current row number
-    eps_filename = f'dataset-{current_date}/eps_images/drawing_{next_row}.eps'
-    png_filename = f'dataset-{current_date}/images/drawing_{next_row}.png'
+    eps_filename = f'{epsFile}/drawing_{next_row}.eps'
+    png_filename = f'{imageFile}/drawing_{next_row}.png'
     
     # Save the drawing as an EPS file and convert EPS file to PNG
     canvas.postscript(file=eps_filename)
@@ -116,12 +117,14 @@ while True:
         print("Enter a valid input.\n") 
 
 #Create files
-current_date = datetime.now().strftime('%Y_%m_%d')
-if isRandom == True: os.makedirs(f'dataset-{current_date}-randomCd')
-else: cd = os.makedirs(f'dataset-{current_date}')
-os.makedirs(f'dataset-{current_date}/images')
-os.makedirs(f'dataset-{current_date}/eps_images')
-datasetfile = f'dataset-{current_date}/dataset.xlsx'
+if isRandom == True: parentFile = f'dataset-{current_date}-randomCd'
+else: cd = parentFile = f'dataset-{current_date}'
+epsFile = f'{parentFile}/eps_images'
+imageFile = f'{parentFile}/images'
+datasetfile = f'{parentFile}/dataset.xlsx'
+os.makedirs(parentFile)
+os.makedirs(imageFile)
+os.makedirs(epsFile)
 sheet.append(["Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
 
 #Create turtle screen
@@ -145,4 +148,4 @@ while x < iteration:
     t.clear()
     x += 1
 
-print(f"Dataset has been created into dataset-{current_date} file.")
+print(f"Dataset has been created into {parentFile} file.")
