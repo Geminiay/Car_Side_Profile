@@ -2,19 +2,22 @@ import turtle
 from PIL import Image
 from openpyxl.drawing.image import Image as OpenpyxlImage
 
-backAngle = 78.26
+backAngle = 77.73
 frontAngle = 58.19
-windShield = 664.75
-rearWindow = 755.63
-roof = 2507.93
-totalWidth = 4166.03
-totalHeight = 1535.63
-base = 4166.03
-roof = 2507.93
-backHeight = 833.01
-hood = 1158.16
-hoodAngle = 4.88
-frontHeight = 862.07
+windShield = 677.49
+rearWindow = 706.46
+totalWidth = 4147.65
+totalHeight = 1540.87
+base = 4147.65
+roof = 2493.97
+backHeight = 850.54
+hood = 1150.29
+hoodAngle = 4.68
+frontHeight = 871.27
+
+#backtotalHeight is 1540.862322
+#fronttotalHeight is 1540.854347
+#totalHeight is 1540.87
 
 s = turtle.getscreen()
 t = turtle.Turtle()
