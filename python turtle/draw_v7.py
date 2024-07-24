@@ -41,11 +41,8 @@ def calculateParameters():
     windShield = round(eq[0][x],2) #actual value is 677.49
     rearWindow = round(eq[0][y],2) #actual value is 706.46
     roof = round(eq[0][z],2) #actual value is 2493.97
-
-    if isRandom == True: cd = round(random.uniform(0,1), 3)
-    else: cd = None
     
-    return windShield, frontAngle, rearWindow, backAngle, roof, cd
+    return windShield, frontAngle, rearWindow, backAngle, roof
 
 def draw(windShield, frontAngle, rearWindow, backAngle, roof):
 
@@ -71,7 +68,7 @@ def draw(windShield, frontAngle, rearWindow, backAngle, roof):
     t.fd(frontHeight/5)
     t.lt(90)
 
-def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
+def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     
     #Print Parameter Results 
     print("Wind Shield Length: ",windShield)
@@ -79,7 +76,6 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
     print("Rear Window Length: ",rearWindow)
     print("Rear Window Angle: ",backAngle)
     print("Roof Length: ",roof)
-    print("Cd: ",cd)
 
     # Next row for the data
     next_row = sheet.max_row + 1
@@ -99,7 +95,6 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
     sheet.cell(row=next_row, column=3).value = "{:.2f}".format(rearWindow)
     sheet.cell(row=next_row, column=4).value = "{:.2f}".format(backAngle)
     sheet.cell(row=next_row, column=5).value = "{:.2f}".format(roof)
-    sheet.cell(row=next_row, column=6).value = cd
     
     workbook.save(datasetfile)
     workbook.close()
@@ -108,17 +103,9 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd):
 
 #Getting input for iteration from user
 iteration = int(input("How many iterations needed?:\n"))
-while True:
-    userBool = input("Do you want random values for coefficient?: (y/n)").lower()
-    if userBool in ['y', 'n']:
-        isRandom = userBool == 'y'
-        break
-    else:
-        print("Enter a valid input.\n") 
 
 #Create files
-if isRandom == True: parentFile = f'dataset-{current_date}-randomCd'
-else: parentFile = f'dataset-{current_date}'
+parentFile = f'dataset-{current_date}'
 epsFile = f'{parentFile}/eps_images'
 imageFile = f'{parentFile}/images'
 datasetfile = f'{parentFile}/dataset.xlsx'
@@ -136,15 +123,15 @@ screen.setup(width=920, height=400)
 
 #Draws the original values and saves
 draw(677.49, 58.19, 706.46, 77.73, 2493.97)
-saveResults(677.49, 58.19, 706.46, 77.73, 2493.97, 0.54)
+saveResults(677.49, 58.19, 706.46, 77.73, 2493.97)
 t.clear()
 
 #Iteration
 x = 0
 while x < iteration: 
-    windShield, frontAngle, rearWindow, backAngle, roof, cd = calculateParameters()
+    windShield, frontAngle, rearWindow, backAngle, roof = calculateParameters()
     draw(windShield, frontAngle, rearWindow, backAngle, roof)
-    saveResults(windShield, frontAngle, rearWindow, backAngle, roof, cd)
+    saveResults(windShield, frontAngle, rearWindow, backAngle, roof)
     t.clear()
     x += 1
 
