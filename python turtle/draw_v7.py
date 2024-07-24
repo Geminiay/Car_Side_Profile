@@ -120,14 +120,11 @@ os.makedirs(imageFile)
 os.makedirs(epsFile)
 
 #Ordering the header row
-columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
-for col in columns:
-    sheet.column_dimensions[col].width = 27
 sheet.append(["Parameter Order", "Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
-
-#Center-align the header row
-for col in range(1, 8):
-    sheet.cell(row=1, column=col).alignment = Alignment(horizontal='center', vertical='center')
+columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+for idx, col in enumerate(columns, start=1):
+    sheet.column_dimensions[col].width = 27
+    sheet.cell(row=1, column=idx).alignment = Alignment(horizontal='center')
 
 #Create turtle screen
 s = turtle.getscreen()
