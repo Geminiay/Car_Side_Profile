@@ -82,13 +82,14 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     next_row = sheet.max_row + 1
 
     #Generate a unique filename based on the current row number
-    eps_filename = f'{epsFile}/drawing_{next_row-2}.eps'
-    png_filename = f'{imageFile}/drawing_{next_row-2}.png'
+    if withImage == True:
+        eps_filename = f'{epsFile}/drawing_{next_row-2}.eps'
+        png_filename = f'{imageFile}/drawing_{next_row-2}.png'
     
-    #Save the drawing as an EPS file and convert EPS file to PNG
-    canvas.postscript(file=eps_filename)
-    with Image.open(eps_filename) as img:
-        img.save(png_filename)
+        #Save the drawing as an EPS file and convert EPS file to PNG
+        canvas.postscript(file=eps_filename)
+        with Image.open(eps_filename) as img:
+            img.save(png_filename)
     
     #Insert the image and parameters into the Excel file
     sheet.cell(row=next_row, column=1).value = next_row-2
@@ -109,15 +110,18 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
 
 #Getting input for iteration from user
 iteration = int(input("How many iterations needed?:\n"))
+withImage = input("Do you want images? (y/n):\n").lower().strip() == 'y'
 
 #Create files
 parentFile = f'dataset-{current_date}'
-epsFile = f'{parentFile}/eps_images'
-imageFile = f'{parentFile}/images'
+if withImage == True:
+    epsFile = f'{parentFile}/eps_images'
+    imageFile = f'{parentFile}/images'
+    os.makedirs(imageFile)
+    os.makedirs(epsFile)
 datasetfile = f'{parentFile}/dataset.xlsx'
 os.makedirs(parentFile)
-os.makedirs(imageFile)
-os.makedirs(epsFile)
+
 
 #Ordering the header row
 sheet.append(["Parameter Order", "Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
@@ -127,24 +131,29 @@ for idx, col in enumerate(columns, start=1):
     sheet.cell(row=1, column=idx).alignment = Alignment(horizontal='center')
 
 #Create turtle screen
-s = turtle.getscreen()
-t = turtle.Turtle()
-screen = turtle.Screen()
-canvas = turtle.getcanvas()
-screen.setup(width=920, height=400)
+if withImage == True:    
+    s = turtle.getscreen()
+    t = turtle.Turtle()
+    screen = turtle.Screen()
+    canvas = turtle.getcanvas()
+    screen.setup(width=920, height=400)
 
 #Draws the original values and saves
-draw(677.49, 58.19, 706.46, 77.73, 2493.97)
+if withImage == True:    
+    draw(677.49, 58.19, 706.46, 77.73, 2493.97)
 saveResults(677.49, 58.19, 706.46, 77.73, 2493.97)
-t.clear()
+if withImage == True:    
+    t.clear()
 
 #Iteration
 x = 0
-while x < iteration: 
+while x < iteration:
     windShield, frontAngle, rearWindow, backAngle, roof = calculateParameters()
-    draw(windShield, frontAngle, rearWindow, backAngle, roof)
+    if withImage == True:    
+        draw(windShield, frontAngle, rearWindow, backAngle, roof)
     saveResults(windShield, frontAngle, rearWindow, backAngle, roof)
-    t.clear()
+    if withImage == True:    
+        t.clear()
     x += 1
 
 print(f"Dataset has been created into {parentFile} file.")
