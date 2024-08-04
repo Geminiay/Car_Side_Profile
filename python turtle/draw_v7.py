@@ -97,11 +97,11 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
 
     #Insert the image and parameters into the Excel file
     sheet.cell(row=next_row, column=1).value = next_row-2
-    sheet.cell(row=next_row, column=2).value = rearWindow
-    sheet.cell(row=next_row, column=3).value = windShield
-    sheet.cell(row=next_row, column=4).value = roof
-    sheet.cell(row=next_row, column=5).value = backAngle
-    sheet.cell(row=next_row, column=6).value = frontAngle
+    sheet.cell(row=next_row, column=2).value = "{:.2f}".format(rearWindow).replace(".",",")
+    sheet.cell(row=next_row, column=3).value = "{:.2f}".format(windShield).replace(".",",")
+    sheet.cell(row=next_row, column=4).value = "{:.2f}".format(roof).replace(".",",")
+    sheet.cell(row=next_row, column=5).value = "{:.2f}".format(backAngle).replace(".",",")
+    sheet.cell(row=next_row, column=6).value = "{:.2f}".format(frontAngle).replace(".",",")
     
     #Center-align all text in the newly added row
     for col in range(1, 7):
