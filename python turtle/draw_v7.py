@@ -23,6 +23,8 @@ hoodSin = math.sin(math.radians(hoodAngle))
 workbook = openpyxl.Workbook()
 sheet = workbook.active
 current_date = datetime.now().strftime('%Y_%m_%d')
+#First line is headers and the second line is the original parameters
+next_row = 2
 
 def calculateParameters():
     #Parameters
@@ -46,8 +48,12 @@ def calculateParameters():
     return windShield, frontAngle, rearWindow, backAngle, roof
 
 def draw(windShield, frontAngle, rearWindow, backAngle, roof):
-
-    turtle.title("Vehicle Side Profile")
+    
+    #Disables the function if withImage is false
+    if withImage == False:
+        return
+    
+    turtle.title(f"Vehicle Side Profile Number {next_row-2}")
     
     #Draw
     t.hideturtle()
@@ -68,19 +74,7 @@ def draw(windShield, frontAngle, rearWindow, backAngle, roof):
     t.lt(90-hoodAngle)
     t.fd(frontHeight/5)
     t.lt(90)
-
-def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     
-    #Print Parameter Results 
-    print("Wind Shield Length: ",windShield)
-    print("Wind Shield Angle: ",frontAngle)
-    print("Rear Window Length: ",rearWindow)
-    print("Rear Window Angle: ",backAngle)
-    print("Roof Length: ",roof)
-
-    #Next row for the data
-    next_row = sheet.max_row + 1
-
     #Generate a unique filename based on the current row number
     eps_filename = f'{epsFile}/drawing_{next_row-2}.eps'
     png_filename = f'{imageFile}/drawing_{next_row-2}.png'
@@ -89,7 +83,18 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     canvas.postscript(file=eps_filename)
     with Image.open(eps_filename) as img:
         img.save(png_filename)
+    t.clear()
+
+def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     
+    global next_row
+    #Print Parameter Results 
+    print("Wind Shield Length: ",windShield)
+    print("Wind Shield Angle: ",frontAngle)
+    print("Rear Window Length: ",rearWindow)
+    print("Rear Window Angle: ",backAngle)
+    print("Roof Length: ",roof)
+
     #Insert the image and parameters into the Excel file
     sheet.cell(row=next_row, column=1).value = next_row-2
     sheet.cell(row=next_row, column=2).value = rearWindow
@@ -106,18 +111,30 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     workbook.close()
 
     print(f"Outputs saved to Excel as parameter number {next_row-2}.")
+    next_row += 1
 
 #Getting input for iteration from user
 iteration = int(input("How many iterations needed?:\n"))
+withImage = input("Do you want images? (y/n):\n").lower().strip() == 'y'
 
 #Create files
 parentFile = f'dataset-{current_date}'
-epsFile = f'{parentFile}/eps_images'
-imageFile = f'{parentFile}/images'
 datasetfile = f'{parentFile}/dataset.xlsx'
 os.makedirs(parentFile)
-os.makedirs(imageFile)
-os.makedirs(epsFile)
+if withImage == True:
+    #Create eps and image files
+    epsFile = f'{parentFile}/eps_images'
+    imageFile = f'{parentFile}/images'
+    os.makedirs(imageFile)
+    os.makedirs(epsFile)
+    
+    #Create turtle screen
+    s = turtle.getscreen()
+    t = turtle.Turtle()
+    screen = turtle.Screen()
+    canvas = turtle.getcanvas()
+    screen.setup(width=920, height=400)
+    turtle.speed(10)
 
 #Ordering the header row
 sheet.append(["Parameter Order", "Rear Window Length", "Wind Shield Length", "Roof Length", "Rear Window Angle (70-85)", "Wind Shield Angle (50-65)", "Cd" ])
@@ -126,25 +143,16 @@ for idx, col in enumerate(columns, start=1):
     sheet.column_dimensions[col].width = 27
     sheet.cell(row=1, column=idx).alignment = Alignment(horizontal='center')
 
-#Create turtle screen
-s = turtle.getscreen()
-t = turtle.Turtle()
-screen = turtle.Screen()
-canvas = turtle.getcanvas()
-screen.setup(width=920, height=400)
-
-#Draws the original values and saves
+#Draws the original values and saves    
 draw(677.49, 58.19, 706.46, 77.73, 2493.97)
-saveResults(677.49, 58.19, 706.46, 77.73, 2493.97)
-t.clear()
-
+saveResults(677.49, 58.19, 706.46, 77.73, 2493.97)  
+    
 #Iteration
 x = 0
-while x < iteration: 
-    windShield, frontAngle, rearWindow, backAngle, roof = calculateParameters()
+while x < iteration:
+    windShield, frontAngle, rearWindow, backAngle, roof = calculateParameters()   
     draw(windShield, frontAngle, rearWindow, backAngle, roof)
     saveResults(windShield, frontAngle, rearWindow, backAngle, roof)
-    t.clear()
     x += 1
 
 print(f"Dataset has been created into {parentFile} file.")
