@@ -92,11 +92,11 @@ def saveResults(windShield, frontAngle, rearWindow, backAngle, roof):
     
     #Insert the image and parameters into the Excel file
     sheet.cell(row=next_row, column=1).value = next_row-2
-    sheet.cell(row=next_row, column=2).value = "{:.2f}".format(windShield)
-    sheet.cell(row=next_row, column=3).value = "{:.2f}".format(frontAngle)
-    sheet.cell(row=next_row, column=4).value = "{:.2f}".format(rearWindow)
-    sheet.cell(row=next_row, column=5).value = "{:.2f}".format(backAngle)
-    sheet.cell(row=next_row, column=6).value = "{:.2f}".format(roof)
+    sheet.cell(row=next_row, column=2).value = rearWindow
+    sheet.cell(row=next_row, column=3).value = windShield
+    sheet.cell(row=next_row, column=4).value = roof
+    sheet.cell(row=next_row, column=5).value = backAngle
+    sheet.cell(row=next_row, column=6).value = frontAngle
     
     #Center-align all text in the newly added row
     for col in range(1, 7):
@@ -120,7 +120,7 @@ os.makedirs(imageFile)
 os.makedirs(epsFile)
 
 #Ordering the header row
-sheet.append(["Parameter Order", "Wind Shield Length", "Wind Shield Angle (50-65)", "Rear Window Length", "Rear Window Angle (70-85)", "Roof Length", "Cd" ])
+sheet.append(["Parameter Order", "Rear Window Length", "Wind Shield Length", "Roof Length", "Rear Window Angle (70-85)", "Wind Shield Angle (50-65)", "Cd" ])
 columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 for idx, col in enumerate(columns, start=1):
     sheet.column_dimensions[col].width = 27

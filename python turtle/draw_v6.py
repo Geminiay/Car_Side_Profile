@@ -19,6 +19,7 @@ screen = turtle.Screen()
 s = turtle.getscreen()
 t = turtle.Turtle()
 canvas = turtle.getcanvas()
+workbook = openpyxl.Workbook()
 sheet = workbook.active
 
 x, y, z = symbols('x y z')
