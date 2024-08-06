@@ -3,14 +3,14 @@ from PIL import Image
 from openpyxl.drawing.image import Image as OpenpyxlImage
 from datetime import datetime
 
-backAngle = 77.73
-frontAngle = 58.19
-windShield = 677.49
-rearWindow = 706.46
+backAngle = 78.12
+frontAngle = 56.85
+windShield = 687.67
+rearWindow = 705.45
 totalWidth = 4147.65
 totalHeight = 1540.87
 base = 4147.65
-roof = 2493.97
+roof = 2479.92
 backHeight = 850.54
 hood = 1150.29
 hoodAngle = 4.68
