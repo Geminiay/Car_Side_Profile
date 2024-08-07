@@ -22,6 +22,11 @@ canvas = turtle.getcanvas()
 
 def draw():
 
+    s = turtle.getscreen()
+    t = turtle.Turtle()
+    screen = turtle.Screen()
+    canvas = turtle.getcanvas()
+
     #Draw
     t.hideturtle()
     t.penup()
