@@ -8,6 +8,7 @@ import warnings
 import turtle
 from PIL import Image
 import math
+import sys
 
 
 #Constants
@@ -125,11 +126,13 @@ print("Target Array y:\n", y)
 lin_model = linearRegression(X, y)
 
 # Prompt the user for initial values
-initial_rearWindow = float(input("Enter initial value for rearWindow: "))
-initial_windShield = float(input("Enter initial value for windShield: "))
-initial_roof = float(input("Enter initial value for roof: "))
-initial_backAngle = float(input("Enter initial value for backAngle: "))
-initial_frontAngle = float(input("Enter initial value for frontAngle: "))
+initial_rearWindow = float(sys.argv[1])
+initial_windShield = float(sys.argv[2])
+initial_roof = float(sys.argv[3])
+initial_backAngle = float(sys.argv[4])
+initial_frontAngle = float(sys.argv[5])
+file_path = sys.argv[6]
+
 
 # Use the user-provided initial values as the starting guess for optimization
 initial_guess = np.array([initial_rearWindow, initial_windShield, initial_roof, initial_backAngle, initial_frontAngle])
