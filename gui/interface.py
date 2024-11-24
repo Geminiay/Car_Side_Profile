@@ -1,15 +1,13 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox
+import customtkinter as ctk
+from tkinter import filedialog, messagebox, Tk, Canvas
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression
 from scipy.optimize import minimize
 import warnings
 import math
 import turtle
-
 
 # Constants
 totalWidth = 4147.65
@@ -55,17 +53,23 @@ def select_file():
     )
     if selected_file:
         file_path.set(selected_file)
-        file_label.config(text=f"Selected File: {selected_file}")  # Update the label with the selected file path
+        file_label.configure(text=f"Selected File: {selected_file}")  # Update the label with the selected file path
 
 # Function to read data from selected file
 def read_file_to_matrix(file_path):
+    if not file_path:
+        raise ValueError("Please select a valid file.")
+        
     if file_path.endswith('.csv'):
         data = pd.read_csv(file_path)
     elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
         data = pd.read_excel(file_path)
     else:
         raise ValueError("Unsupported file type. Please select a CSV or Excel file.")
-
+    
+    if data.empty:
+        raise ValueError("The file is empty or could not be read properly.")
+    
     data_X = data.iloc[:, 1:-1].values
     data_y = data.iloc[:, -1].values
 
@@ -73,6 +77,9 @@ def read_file_to_matrix(file_path):
 
 # Linear regression model fitting
 def linearRegression(X, y):
+    if X is None or y is None or len(X) == 0 or len(y) == 0:
+        raise ValueError("Invalid input data for training.")
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     lin_model = LinearRegression()
     lin_model.fit(X_train, y_train)
@@ -97,18 +104,24 @@ def objective_function(X_input, lin_model):
 # Run optimization and draw the vehicle
 def start_optimization():
     try:
-        rearWindow = float(rearWindow_entry.get())
-        windShield = float(windShield_entry.get())
-        roof = float(roof_entry.get())
-        backAngle = float(backAngle_entry.get())
-        frontAngle = float(frontAngle_entry.get())
+        # Get input values from the user interface
+        rearWindow = float(rearWindow_entry.get()) if rearWindow_entry.get() else None
+        windShield = float(windShield_entry.get()) if windShield_entry.get() else None
+        roof = float(roof_entry.get()) if roof_entry.get() else None
+        backAngle = float(backAngle_entry.get()) if backAngle_entry.get() else None
+        frontAngle = float(frontAngle_entry.get()) if frontAngle_entry.get() else None
+
+        if None in [rearWindow, windShield, roof, backAngle, frontAngle]:
+            raise ValueError("All input fields must be filled.")
 
         if not file_path.get():
             raise ValueError("Please select a file.")
 
+        # Read the file and train the model
         X, y = read_file_to_matrix(file_path.get())
         lin_model = linearRegression(X, y)
 
+        # Initial guess for optimization
         initial_guess = np.array([rearWindow, windShield, roof, backAngle, frontAngle])
         bounds = [(min(X[:, i]), max(X[:, i])) for i in range(X.shape[1])]
 
@@ -122,14 +135,15 @@ def start_optimization():
         X_optimized = result.x
         y_optimized = result.fun
 
-        # Update results on the GUI
-        result_label.config(text=f"Optimized Values:\n"
-                                 f"Rear Window: {X_optimized[0]:.2f}\n"
-                                 f"Wind Shield: {X_optimized[1]:.2f}\n"
-                                 f"Roof: {X_optimized[2]:.2f}\n"
-                                 f"Back Angle: {X_optimized[3]:.2f}\n"
-                                 f"Front Angle: {X_optimized[4]:.2f}\n"
-                                 f"Predicted Minimum Target: {y_optimized:.4f}")
+        # Update results on the GUI with larger font
+        result_label.configure(text=f"Optimized Values:\n"
+                                   f"Rear Window: {X_optimized[0]:.2f}\n"
+                                   f"Wind Shield: {X_optimized[1]:.2f}\n"
+                                   f"Roof: {X_optimized[2]:.2f}\n"
+                                   f"Back Angle: {X_optimized[3]:.2f}\n"
+                                   f"Front Angle: {X_optimized[4]:.2f}\n"
+                                   f"Predicted Minimum Target: {y_optimized:.4f}",
+                                   font=("Arial", 16))
 
         draw(X_optimized[0], X_optimized[1], X_optimized[2], X_optimized[3], X_optimized[4])
 
@@ -137,55 +151,65 @@ def start_optimization():
         messagebox.showerror("Error", f"An error occurred: {e}")
 
 # GUI setup
-root = tk.Tk()
+root = ctk.CTk()
 root.title("Vehicle Profile Optimizer")
 
-file_path = tk.StringVar()
+# Disable resizing of the window
+root.resizable(False, False)
 
-# Left Panel (Inputs and Results)
-left_frame = tk.Frame(root)
-left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
+file_path = ctk.StringVar()
 
-tk.Label(left_frame, text="Rear Window:").grid(row=0, column=0, sticky="w", pady=2)
-rearWindow_entry = tk.Entry(left_frame)
+# Apply dark mode theme to the entire GUI
+ctk.set_appearance_mode("dark")
+
+# Left Panel (Inputs)
+left_frame = ctk.CTkFrame(root)
+left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n",)
+
+ctk.CTkLabel(left_frame, text="Rear Window:").grid(row=0, column=0, sticky="w", pady=2)
+rearWindow_entry = ctk.CTkEntry(left_frame)
 rearWindow_entry.grid(row=0, column=1, pady=2)
 
-tk.Label(left_frame, text="Wind Shield:").grid(row=1, column=0, sticky="w", pady=2)
-windShield_entry = tk.Entry(left_frame)
+ctk.CTkLabel(left_frame, text="Wind Shield:").grid(row=1, column=0, sticky="w", pady=2)
+windShield_entry = ctk.CTkEntry(left_frame)
 windShield_entry.grid(row=1, column=1, pady=2)
 
-tk.Label(left_frame, text="Roof:").grid(row=2, column=0, sticky="w", pady=2)
-roof_entry = tk.Entry(left_frame)
+ctk.CTkLabel(left_frame, text="Roof:").grid(row=2, column=0, sticky="w", pady=2)
+roof_entry = ctk.CTkEntry(left_frame)
 roof_entry.grid(row=2, column=1, pady=2)
 
-tk.Label(left_frame, text="Back Angle:").grid(row=3, column=0, sticky="w", pady=2)
-backAngle_entry = tk.Entry(left_frame)
+ctk.CTkLabel(left_frame, text="Back Angle:").grid(row=3, column=0, sticky="w", pady=2)
+backAngle_entry = ctk.CTkEntry(left_frame)
 backAngle_entry.grid(row=3, column=1, pady=2)
 
-tk.Label(left_frame, text="Front Angle:").grid(row=4, column=0, sticky="w", pady=2)
-frontAngle_entry = tk.Entry(left_frame)
+ctk.CTkLabel(left_frame, text="Front Angle:").grid(row=4, column=0, sticky="w", pady=2)
+frontAngle_entry = ctk.CTkEntry(left_frame)
 frontAngle_entry.grid(row=4, column=1, pady=2)
 
-tk.Button(left_frame, text="Select File", command=select_file).grid(row=5, column=0, columnspan=2, pady=5)
-file_label = tk.Label(left_frame, text="No file selected", fg="blue")
+ctk.CTkButton(left_frame, text="Select File", command=select_file).grid(row=5, column=0, columnspan=2, pady=5)
+file_label = ctk.CTkLabel(left_frame, text="No file selected", text_color="white")
 file_label.grid(row=6, column=0, columnspan=2)
 
-tk.Button(left_frame, text="Start", command=start_optimization).grid(row=7, column=0, columnspan=2, pady=5)
-
-# Results Display
-result_label = tk.Label(left_frame, text="Results will be displayed here", fg="green", justify="left")
-result_label.grid(row=8, column=0, columnspan=2, pady=10)
-
-# Right Panel (Turtle Drawing)
-right_frame = tk.Frame(root)
+# Right Panel (Results)
+right_frame = ctk.CTkFrame(root)
 right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n")
 
-canvas = tk.Canvas(right_frame, width=920, height=400)
-canvas.pack()
+# Start Button to trigger optimization (above Optimized Values)
+start_button = ctk.CTkButton(right_frame, text="Start Optimization", command=start_optimization)
+start_button.grid(row=0, column=0, columnspan=2, pady=5)
 
-# Embed turtle screen
+# Optimized Values label (larger font)
+ctk.CTkLabel(right_frame, text="Optimized Values", font=("Arial", 20)).grid(row=1, column=0, columnspan=2, pady=5)
+
+# Result label (larger font)
+result_label = ctk.CTkLabel(right_frame, text="Optimized values will appear here.", font=("Arial", 16))
+result_label.grid(row=2, column=0, padx=10, pady=10)
+
+# Canvas for Turtle Screen
+canvas = Canvas(root, width=920, height=400)
+canvas.grid(row=1, column=0, columnspan=2, pady=10)
 screen = turtle.TurtleScreen(canvas)
 t = turtle.RawTurtle(screen)
-screen.bgcolor("white")
 
+# Start the Tkinter event loop
 root.mainloop()
